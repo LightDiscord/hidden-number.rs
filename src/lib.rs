@@ -1,11 +1,13 @@
 use std::default::Default;
 use std::fmt;
 
+#[derive(Debug)]
 pub enum Data {
     None,
     Good(Position, u8)
 }
 
+#[derive(Debug)]
 pub enum Position {
     Good,
     Bad
@@ -32,6 +34,27 @@ impl Default for Values {
     }
 }
 
+impl Value {
+    pub fn has_some (&self, number: u8) -> bool {
+        self.0 == number || self.1 == number || self.2 == number
+    }
+
+    pub fn occurences(&self, position: &Position, numbers: Value) -> u8 {
+        let &Value(a, b, c) = self;
+        let Value(x, y, z) = numbers;
+
+        match position {
+            &Position::Good => {
+                vec![a == x, b == y, c == z].iter().filter(|&b| *b).count() as u8
+            },
+            &Position::Bad => {
+                vec![a == y || a == z, b == x || b == z || c == x || c == y].iter()
+                    .filter(|&b| *b).count() as u8
+            }
+        }
+    }
+}
+
 impl Values {
     pub fn apply (self, numbers: Value, data: Data) -> Self {
         let Value(x, y, z) = numbers;
@@ -40,56 +63,15 @@ impl Values {
         match data {
             Data::None => {
                 let values: Vec<Value> = values.into_iter()
-                    .filter(|&Value(a, b, c)| !(a == x || a == y || a == z
-                                                || b == x || b == y || b == z
-                                                || c == x || c == y || c == z))
+                    .filter(|&value| !(value.has_some(x) || value.has_some(y) || value.has_some(z)))
                     .collect();
 
                 Values(values)
             },
-            Data::Good(Position::Good, number) => {
+            Data::Good(position, number) => {
                 let values = values.into_iter()
-                    .filter(|&Value(a, b, c)| {
-                        let mut occurence = 0u8;
-
-                        if a == x {
-                            occurence += 1
-                        }
-
-                        if b == y {
-                            occurence += 1
-                        }
-
-                        if c == z {
-                            occurence += 1
-                        }
-
-                        occurence == number
-                    })
-                .collect();
-
-                Values(values)
-            },
-            Data::Good(Position::Bad, number) => {
-                let values = values.into_iter()
-                    .filter(|&Value(a, b, c)| {
-                        let mut occurence = 0u8;
-
-                        if a == y || a == z {
-                            occurence += 1
-                        }
-
-                        if b == x || b == z {
-                            occurence += 1
-                        }
-
-                        if c == x || c == y {
-                            occurence += 1
-                        }
-
-                        occurence == number
-                    })
-                .collect();
+                    .filter(|&value| value.occurences(&position, numbers) == number)
+                    .collect();
 
                 Values(values)
             }
