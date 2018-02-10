@@ -13,7 +13,7 @@ pub enum Position {
 
 #[derive(Debug)]
 pub struct Values(Vec<Value>);
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Value(u8, u8, u8);
 
 impl Default for Values {
@@ -105,7 +105,7 @@ impl fmt::Display for Value {
 
 impl fmt::Display for Values {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "The following values correspond to your criteria:\n{}", 
+        write!(f, "The following values correspond to your criteria: {}",
                self.0.iter()
                .fold(String::new(), |acc, &value| format!("{}{} ", acc, value)))
     }
@@ -114,7 +114,6 @@ impl fmt::Display for Values {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fmt::Display;
 
     #[test]
     fn it_works() {
@@ -126,5 +125,6 @@ mod tests {
             .apply(Value(2,6,0), Data::Good(Position::Bad, 1));
 
         println!("{}", values);
+        assert!(values.0[0] == Value(7, 8, 6))
     }
 }
