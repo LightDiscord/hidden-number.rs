@@ -1,6 +1,9 @@
 [package]
 name = "hidden-number"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["LightDiscord <arnaud@lightdiscord.me>"]
+publish = true
+readme = "README.md"
+repository = "https://github.com/LightDiscord/hidden-number.rs"
 
 [dependencies]
