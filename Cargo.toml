@@ -1,9 +1,11 @@
 [package]
 name = "hidden-number"
+description = "Find a secret code from some criteria!"
 version = "1.0.0"
 authors = ["LightDiscord <arnaud@lightdiscord.me>"]
 publish = true
 readme = "README.md"
 repository = "https://github.com/LightDiscord/hidden-number.rs"
+license = "MIT"
 
 [dependencies]
