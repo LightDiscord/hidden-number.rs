@@ -1,26 +1,39 @@
+//! Find a secret code from criteria
+
+#![deny(missing_docs, unsafe_code, unused_extern_crates, warnings)]
+
 use std::default::Default;
 use std::fmt;
 
+/// Criteria information
 #[derive(Debug)]
 pub enum Data {
+    /// None of numbers is in the final code
     None,
+    /// Multiple number is in the code
     Good(Position, u8)
 }
 
+/// Criteria numbers, where are they ?
 #[derive(Debug)]
 pub enum Position {
+    /// It's at the right place !
     Good,
+    /// Not in the right digit
     Bad
 }
 
+/// Every Values available
 #[derive(Debug)]
 pub struct Values(Vec<Value>);
+
+/// A possible code
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Value(u8, u8, u8);
 
 impl Default for Values {
     fn default () -> Self {
-        let mut values: Vec<Value> = Vec::new();
+        let mut values: Vec<Value> = Vec::with_capacity(10 * 10 * 10);
 
         for x in 0..10 {
             for y in 0..10 {
@@ -35,10 +48,12 @@ impl Default for Values {
 }
 
 impl Value {
+    /// Find if your code contain a number
     pub fn has_some (&self, number: u8) -> bool {
         self.0 == number || self.1 == number || self.2 == number
     }
 
+    /// Find if your code contain a number at same position or in other
     pub fn occurences(&self, position: &Position, numbers: Value) -> u8 {
         let &Value(a, b, c) = self;
         let Value(x, y, z) = numbers;
@@ -56,6 +71,7 @@ impl Value {
 }
 
 impl Values {
+    /// Apply criteria to your values
     pub fn apply (self, numbers: Value, data: Data) -> Self {
         let Value(x, y, z) = numbers;
         let Values(values) = self;
